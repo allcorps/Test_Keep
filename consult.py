@@ -1,22 +1,19 @@
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Image
 from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
-from reportlab.lib.utils import ImageReader
-import PyPDF2
-from io import BytesIO
+from reportlab.lib.enums import TA_CENTER
+from PIL import Image as imageP
+import imghdr
+import tempfile
+import io
 import main
 import sqlite3
 from PyQt5.QtGui import QPixmap
-import os
-from PIL import Image
-import io
+
 
 
 class Consutar(QtWidgets.QMainWindow):
@@ -25,6 +22,9 @@ class Consutar(QtWidgets.QMainWindow):
 
         # cargar el archivo .ui
         uic.loadUi('sources/consult.ui', self)
+
+        # establecer tamaño fijo de la ventana
+        self.setFixedSize(self.size())
 
         self.conexion = sqlite3.connect('sources/database.bd', timeout=10)
         self.flag = 0
@@ -50,7 +50,6 @@ class Consutar(QtWidgets.QMainWindow):
             datos = cursor.fetchall()
             cursor.close()
         except Exception as e:
-            print(f"Error: {e}")
             msg = (f"Ha ocurrido un error: {e}")
             self.ventana_emergente(msg)
 
@@ -81,12 +80,9 @@ class Consutar(QtWidgets.QMainWindow):
             cursor.execute(cunsulta, parametros)
             resultado = cursor.fetchall()
             return resultado[0][0]
-            pass
         except:
             msg = ("No se encontro registro con los datos proporcionados ")
             self.ventana_emergente(msg)
-            pass
-        pass
 
     def funcion_consultar(self):
         cursor = self.conexion.cursor()
@@ -105,16 +101,13 @@ class Consutar(QtWidgets.QMainWindow):
             # Cerrar la conexión a la base de datos y devolver el resultado de la consulta
             cursor.close()
             self.buscar_imagenes()
-            pass
         except:
             pass
-        pass
 
     def funcion_eliminar(self):
         cursor = self.conexion.cursor()
         try:
             ide = self.buscar_id()
-            print(ide)
             cprueba = cursor.execute("SELECT casoprueba FROM registros WHERE ejecucion_id = ?", (ide,)).fetchone()[0]
             cursor.execute("DELETE FROM evidencias WHERE ejecucion_id = ?", (ide,))
             cursor.execute("DELETE FROM registros WHERE ejecucion_id = ?", (ide,))
@@ -128,7 +121,8 @@ class Consutar(QtWidgets.QMainWindow):
                 msg = (f"Se eliminó el registro: {cprueba}")
             self.ventana_emergente(msg)
         except Exception as e:
-            print(f"Error al eliminar registro: {str(e)}")
+            msg = e
+            self.ventana_emergente(msg)
 
     def funcion_volver(self):
         if self.lbl_fotopaso.pixmap() is None:
@@ -153,10 +147,8 @@ class Consutar(QtWidgets.QMainWindow):
             cursor.close()
             msg = ("Registro actualizado! ")
             self.ventana_emergente(msg)
-            pass
         except:
             pass
-        pass
 
     def funcion_siguiente(self):
         cursor = self.conexion.cursor()
@@ -164,22 +156,17 @@ class Consutar(QtWidgets.QMainWindow):
             cursor.execute("SELECT COUNT(ejecucion_id) FROM evidencias WHERE ejecucion_id = ?", (self.buscar_id(),))
             conteo = cursor.fetchall()
             valores = int(conteo[0][0])
-            print(valores)
             if self.lbl_fotopaso.pixmap() is None:
                 # Si el QLabel no tiene una imagen asignada, no hace nada
                 return
             elif self.flag == valores-1:
                 msg = ("Estas en el ultimo registro ")
                 self.ventana_emergente(msg)
-                pass
             else:
                 self.flag += 1
                 self.buscar_imagenes(self.flag)
-                pass
-            pass
         except:
             pass
-        pass
 
     def buscar_imagenes(self, flag=0):
         cursor = self.conexion.cursor()
@@ -197,12 +184,9 @@ class Consutar(QtWidgets.QMainWindow):
                 self.lbl_numero.setText("Caso: None")
                 self.lbl_imagens.clear()
             cursor.close()
-            pass
         except:
             msg = ("No se encontro registro de evidencias ")
             self.ventana_emergente(msg)
-            pass
-        pass
 
     def funcion_exportar(self):
         # querys para extraer toda la informacion
@@ -216,7 +200,7 @@ class Consutar(QtWidgets.QMainWindow):
 
         cursor.execute(consulta_evidencias)
         evidencias = cursor.fetchall()
-        print(evidencias)
+
         # Definir el estilo para los encabezados y párrafos en el documento
         estilo_encabezado = ParagraphStyle(name='Encabezado', fontSize=16, leading=20)
         estilo_parrafo = ParagraphStyle(name='Parrafo', fontSize=12, leading=14)
@@ -228,14 +212,8 @@ class Consutar(QtWidgets.QMainWindow):
         nombre_archivo = f"{registro[0][1]}.pdf"
         pdf = SimpleDocTemplate(nombre_archivo, pagesize=letter)
 
-        # Crear un objeto BytesIO para almacenar el contenido del PDF en memoria
-        buffer = BytesIO()
-
-        # Crear un objeto Canvas
-        c = canvas.Canvas(buffer)
-
         # Agregar el título al PDF utilizando el estilo definido
-        titulo = "Documentacion de caso de prueba"
+        titulo = "Documentacion de caso de prueba\n"
         contenido = [Paragraph(titulo, estilo_titulo)]
 
         # Agregar los valores al PDF utilizando los estilos definidos
@@ -244,9 +222,13 @@ class Consutar(QtWidgets.QMainWindow):
         for campo, valor in zip(campos, registro[0][1:]):
             contenido.append(Paragraph(campo, estilo_encabezado))
             contenido.append(Paragraph(valor, estilo_parrafo))
-            contenido.append(Paragraph("", estilo_parrafo))
+            contenido.append(Paragraph("\n", estilo_parrafo))
 
-        # Generar el documento PDF
+        for valor in evidencias:
+            print(valor[2])
+            contenido.append(Paragraph(valor[2], estilo_encabezado))
+            print(valor[3])
+
         pdf.build(contenido)
         pass
 
@@ -257,7 +239,6 @@ class Consutar(QtWidgets.QMainWindow):
         popup.setText(mensaje)
         popup.setIcon(QMessageBox.Information)
         popup.exec_()
-        pass
 
     def limpiar_box(self):
         self.cb_project.clear()
@@ -269,7 +250,6 @@ class Consutar(QtWidgets.QMainWindow):
         self.lbl_ra.clear()
         self.lbl_fotopaso.clear()
         self.txt_pasodesc.clear()
-        pass
 
     def funcion_cancelar(self):
         self.main = main.TestKeep()

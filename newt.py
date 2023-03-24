@@ -13,6 +13,9 @@ class Nuevor(QtWidgets.QMainWindow):
         # cargar el archivo .ui
         uic.loadUi('sources/newr.ui', self)
 
+        # establecer tamaño fijo de la ventana
+        self.setFixedSize(self.size())
+
         #cargar base de datos
         self.conexion = sqlite3.connect('sources/database.bd', timeout=10)
 
@@ -28,7 +31,6 @@ class Nuevor(QtWidgets.QMainWindow):
         popup.setText(mensaje)
         popup.setIcon(QMessageBox.Information)
         popup.exec_()
-        pass
 
     #Se usa para guardar el registro del formulario
     def funcion_iniciar(self):
@@ -75,17 +77,14 @@ class Nuevor(QtWidgets.QMainWindow):
             self.conexion.commit()
             cursor.close()
             msg = "Datos guardados exitosamente"
-            print(msg)
             self.ventana_emergente(msg)
             self.funcion_limpiar()
             self.abrir_ventana_test()
             pass
         except Exception as e:
-            print(f"Error: {e}")
             msg = (f"Ha ocurrido un error: {e}")
             self.ventana_emergente(msg)
             self.funcion_limpiar()
-        pass
 
     def funcion_limpiar(self):
         self.txt_proyecto.clear()
@@ -102,13 +101,8 @@ class Nuevor(QtWidgets.QMainWindow):
         self.nuevo = test.Testing()
         self.nuevo.show()
         self.hide()
-        print("fue a test")
-        pass
 
-    #Regresa al main
     def funcion_regresar(self):
         self.main = main.TestKeep()
         self.main.show()
         self.close()
-        print("se fue a main")
-        pass

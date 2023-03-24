@@ -12,6 +12,9 @@ class TestKeep(QtWidgets.QMainWindow):
         # cargar el diseño
         uic.loadUi('sources/main.ui', self)
 
+        # establecer tamaño fijo de la ventana
+        self.setFixedSize(self.size())
+
         # Cargar imagen en un objeto QPixmap
         pixmap = QPixmap('sources/logo_exp.png')
 
@@ -28,21 +31,16 @@ class TestKeep(QtWidgets.QMainWindow):
         self.nuevo = newt.Nuevor()    # Crea una instancia de la clase "Nuevor" definida en el archivo "newt.py"
         self.nuevo.show()    # Muestra la ventana de la instancia "nuevo" y la hace visible
         self.hide()    # Oculta la ventana principal
-        print("fue a nuevo")
-        pass
 
     #realiza la misma funcion de ventana nuevo pero esta vez hacia la ventana consultar
     def abrir_ventana_consultar(self):
         self.nuevo = consult.Consutar()
         self.nuevo.show()
         self.hide()
-        print("fue a nuevo")
-        pass
 
     def funcion_exit(self):
         # Llamamos a la función para cerrar la aplicación
         QApplication.quit()
-        pass
 
 
 if __name__ == '__main__':
