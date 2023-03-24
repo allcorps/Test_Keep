@@ -132,6 +132,20 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>txt_proyecto</tabstop>
+  <tabstop>txt_loop</tabstop>
+  <tabstop>txt_id</tabstop>
+  <tabstop>txt_caset</tabstop>
+  <tabstop>txt_description</tabstop>
+  <tabstop>txt_sources</tabstop>
+  <tabstop>txt_datat</tabstop>
+  <tabstop>txt_result</tabstop>
+  <tabstop>txt_tester</tabstop>
+  <tabstop>btn_start</tabstop>
+  <tabstop>btn_clean</tabstop>
+  <tabstop>btn_cancel</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

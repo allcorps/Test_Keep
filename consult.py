@@ -1,9 +1,22 @@
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
+from reportlab.lib.utils import ImageReader
+import PyPDF2
+from io import BytesIO
 import main
 import sqlite3
 from PyQt5.QtGui import QPixmap
+import os
+from PIL import Image
+import io
 
 
 class Consutar(QtWidgets.QMainWindow):
@@ -192,6 +205,49 @@ class Consutar(QtWidgets.QMainWindow):
         pass
 
     def funcion_exportar(self):
+        # querys para extraer toda la informacion
+        consulta_registro = (f"SELECT * FROM registros WHERE ejecucion_id = {self.buscar_id()}")
+        consulta_evidencias = (f"SELECT * FROM evidencias WHERE ejecucion_id = {self.buscar_id()}")
+
+        cursor = self.conexion.cursor()
+
+        cursor.execute(consulta_registro)
+        registro = cursor.fetchall()
+
+        cursor.execute(consulta_evidencias)
+        evidencias = cursor.fetchall()
+        print(evidencias)
+        # Definir el estilo para los encabezados y párrafos en el documento
+        estilo_encabezado = ParagraphStyle(name='Encabezado', fontSize=16, leading=20)
+        estilo_parrafo = ParagraphStyle(name='Parrafo', fontSize=12, leading=14)
+        # Definir el estilo para el título del documento
+        estilo_titulo = ParagraphStyle(name='Titulo', fontName='Helvetica-Bold', fontSize=20, leading=26,
+                                       alignment=TA_CENTER)
+
+        # Crear un objeto SimpleDocTemplate para generar el documento PDF
+        nombre_archivo = f"{registro[0][1]}.pdf"
+        pdf = SimpleDocTemplate(nombre_archivo, pagesize=letter)
+
+        # Crear un objeto BytesIO para almacenar el contenido del PDF en memoria
+        buffer = BytesIO()
+
+        # Crear un objeto Canvas
+        c = canvas.Canvas(buffer)
+
+        # Agregar el título al PDF utilizando el estilo definido
+        titulo = "Documentacion de caso de prueba"
+        contenido = [Paragraph(titulo, estilo_titulo)]
+
+        # Agregar los valores al PDF utilizando los estilos definidos
+        campos = ["Proyecto:", "Ciclo:", "Id caso de prueba:", "Nombre de caso de prueba:", "Descripción:",
+                  "Pre requisitos:", "Datos de prueba:", "Resultado esperado:", "Tester:", "Fecha de ejecucion:"]
+        for campo, valor in zip(campos, registro[0][1:]):
+            contenido.append(Paragraph(campo, estilo_encabezado))
+            contenido.append(Paragraph(valor, estilo_parrafo))
+            contenido.append(Paragraph("", estilo_parrafo))
+
+        # Generar el documento PDF
+        pdf.build(contenido)
         pass
 
     #popup
