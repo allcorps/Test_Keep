@@ -1,6 +1,7 @@
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtCore import QByteArray, QIODevice, QBuffer, Qt
 from PyQt5.QtWidgets import QMessageBox, QApplication
+from PyQt5.QtGui import QPixmap, QScreen
 import main
 import consult
 import sqlite3
@@ -57,27 +58,29 @@ class Testing(QtWidgets.QMainWindow):
             buff.open(QIODevice.WriteOnly)
             foto.save(buff, "PNG")
 
-        try:
-            cursor = self.conexion.cursor()
-            cursor.execute("INSERT INTO evidencias(ejecucion_id, caso, evidencia) VALUES (?, ?, ?)", (id_fk, caso, bArray))
-            self.conexion.commit()
-            cursor.close()
+            try:
+                cursor = self.conexion.cursor()
+                cursor.execute("INSERT INTO evidencias(ejecucion_id, caso, evidencia) VALUES (?, ?, ?)", (id_fk, caso, bArray))
+                self.conexion.commit()
+                cursor.close()
 
-        except Exception as e:
-            msg = (f"Ha ocurrido un error: {e}")
-            self.ventana_emergente(msg)
+            except Exception as e:
+                msg = (f"Ha ocurrido un error: {e}")
+                self.ventana_emergente(msg)
 
     def funcion_capturar(self):
-        # Capturar la pantalla primaria
-        screen = QApplication.primaryScreen()
+        # captura la pantalla y convierte la imagen en un QPixmap
+        screen = QScreen.grabWindow(QApplication.primaryScreen(), 0)
+        # screen =  ImageGrab.grab()
+        pixmap = QPixmap(screen)
 
-        # Obtener la ID de la ventana activa
-        active_window_id = self.winId()
+        # Redimensionar la imagen al tamaño del QLabel
+        #pixmap = pixmap.scaled(self.lbl_foto.width(), self.lbl_foto.height())
 
-        # Tomar una captura de lo que está detrás de la ventana activa
-        pixmap = screen.grabWindow(active_window_id, -1, -1, -1, -1)
-
+        print("capturado")
         return pixmap
+
+        pass
 
     def funcion_terminar(self):
         msg = "Ejecucion finalizada"

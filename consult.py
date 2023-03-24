@@ -5,9 +5,15 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.utils import ImageReader
+from reportlab.pdfgen import canvas
 import main
 import sqlite3
 from PyQt5.QtGui import QPixmap
+from reportlab.lib.units import inch
+from reportlab.platypus import Image
+from PIL import Image as PILImage
+from io import BytesIO
 
 
 class Consutar(QtWidgets.QMainWindow):
@@ -219,13 +225,24 @@ class Consutar(QtWidgets.QMainWindow):
             contenido.append(Paragraph(valor, estilo_parrafo))
             contenido.append(Paragraph("\n", estilo_parrafo))
 
-        for valor in evidencias:
-            print(valor[2])
+        for valor in evidencias: # tiene n registros
             contenido.append(Paragraph(valor[2], estilo_encabezado))
-            print(valor[3])
+
+            try:
+                img = ImageReader(BytesIO(valor[3]))
+                width, height = img.getSize()
+                aspect = height / float(width)
+                desired_width = 300
+                image = Image(BytesIO(valor[3]), width=desired_width, height=(desired_width * aspect))
+                contenido.append(image)
+                print("si c cargo la img")
+            except Exception as e:
+                print(f"error {e}")
 
         pdf.build(contenido)
-        pass
+        print("yasiso el pdf")
+        cursor.close()  # Cerrar el cursor
+        return  # Terminar la ejecución de la función
 
     def ventana_emergente(self, mensaje):
         popup = QMessageBox()
