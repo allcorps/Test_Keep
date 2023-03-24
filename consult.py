@@ -1,19 +1,13 @@
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
-from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Image
+from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
-from PIL import Image as imageP
-import imghdr
-import tempfile
-import io
 import main
 import sqlite3
 from PyQt5.QtGui import QPixmap
-
 
 
 class Consutar(QtWidgets.QMainWindow):
@@ -21,6 +15,7 @@ class Consutar(QtWidgets.QMainWindow):
         super().__init__()
 
         # cargar el archivo .ui
+        self.main = None
         uic.loadUi('sources/consult.ui', self)
 
         # establecer tamaño fijo de la ventana
@@ -80,8 +75,8 @@ class Consutar(QtWidgets.QMainWindow):
             cursor.execute(cunsulta, parametros)
             resultado = cursor.fetchall()
             return resultado[0][0]
-        except:
-            msg = ("No se encontro registro con los datos proporcionados ")
+        except Exception as e:
+            msg = (f"No se encontro registro con los datos proporcionados {e}")
             self.ventana_emergente(msg)
 
     def funcion_consultar(self):
@@ -89,7 +84,6 @@ class Consutar(QtWidgets.QMainWindow):
         self.flag = 0
 
         try:
-            #ejecutar consulta
             cursor.execute("SELECT descripcion, resultadoesperado FROM registros WHERE ejecucion_id = ?",
                            (self.buscar_id(),))
             resultado = cursor.fetchall()
@@ -121,6 +115,7 @@ class Consutar(QtWidgets.QMainWindow):
                 msg = (f"Se eliminó el registro: {cprueba}")
             self.ventana_emergente(msg)
         except Exception as e:
+            print("llego aqi")
             msg = e
             self.ventana_emergente(msg)
 
@@ -232,7 +227,6 @@ class Consutar(QtWidgets.QMainWindow):
         pdf.build(contenido)
         pass
 
-    #popup
     def ventana_emergente(self, mensaje):
         popup = QMessageBox()
         popup.setWindowTitle("Aviso!")
