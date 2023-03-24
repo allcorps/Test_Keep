@@ -76,7 +76,7 @@ class Testing(QtWidgets.QMainWindow):
 
         # Tomar una captura de lo que está detrás de la ventana activa
         pixmap = screen.grabWindow(active_window_id, -1, -1, -1, -1)
-        self.mostrar_previsualizacion(pixmap)
+
         return pixmap
 
     def funcion_terminar(self):
