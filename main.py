@@ -1,5 +1,5 @@
 from PyQt5 import uic, QtWidgets
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication
 import newt
 import consult
@@ -16,11 +16,14 @@ class TestKeep(QtWidgets.QMainWindow):
         self.setFixedSize(self.size())
 
         # Cargar imagen en un objeto QPixmap
-        pixmap = QPixmap('sources/logo_exp.png')
+        pixmap = QPixmap('sources/logo.png')
+        self.setWindowIcon(QIcon("sources/tk_log.png"))
+
 
         # Ajustar tamaño de la imagen de ser necesario
-        #pixmap = pixmap.scaledToWidth(200)
+        pixmap = pixmap.scaledToWidth(200)
         self.lbl_logo.setPixmap(pixmap)
+
 
         # conecta los botones a sus correspondientes funciones
         self.btn_new.clicked.connect(self.abrir_ventana_nuevo)

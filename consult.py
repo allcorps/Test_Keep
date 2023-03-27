@@ -6,13 +6,10 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.utils import ImageReader
-from reportlab.pdfgen import canvas
 import main
 import sqlite3
-from PyQt5.QtGui import QPixmap
-from reportlab.lib.units import inch
+from PyQt5.QtGui import QPixmap ,QIcon
 from reportlab.platypus import Image
-from PIL import Image as PILImage
 from io import BytesIO
 
 
@@ -26,6 +23,7 @@ class Consutar(QtWidgets.QMainWindow):
 
         # establecer tamaño fijo de la ventana
         self.setFixedSize(self.size())
+        self.setWindowIcon(QIcon("sources/tk_log.png"))
 
         self.conexion = sqlite3.connect('sources/database.bd', timeout=10)
         self.flag = 0
@@ -241,6 +239,8 @@ class Consutar(QtWidgets.QMainWindow):
 
         pdf.build(contenido)
         print("yasiso el pdf")
+        msg = (f"Documento {nombre_archivo}.pdf generado exitosamente!")
+        self.ventana_emergente(msg)
         cursor.close()  # Cerrar el cursor
         return  # Terminar la ejecución de la función
 

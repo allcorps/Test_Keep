@@ -1,5 +1,6 @@
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtGui import QIcon
 import main
 import test
 import sqlite3
@@ -15,6 +16,7 @@ class Nuevor(QtWidgets.QMainWindow):
 
         # establecer tamaño fijo de la ventana
         self.setFixedSize(self.size())
+        self.setWindowIcon(QIcon("sources/tk_log.png"))
 
         #cargar base de datos
         self.conexion = sqlite3.connect('sources/database.bd', timeout=10)
@@ -23,6 +25,18 @@ class Nuevor(QtWidgets.QMainWindow):
         self.btn_start.clicked.connect(self.funcion_iniciar)
         self.btn_clean.clicked.connect(self.funcion_limpiar)
         self.btn_cancel.clicked.connect(self.funcion_regresar)
+
+        # Establecer que el widgets cambie de foco cuando se presione Tab
+        self.txt_proyecto.setTabChangesFocus(True)
+        self.txt_loop.setTabChangesFocus(True)
+        self.txt_id.setTabChangesFocus(True)
+        self.txt_caset.setTabChangesFocus(True)
+        self.txt_description.setTabChangesFocus(True)
+        self.txt_sources.setTabChangesFocus(True)
+        self.txt_datat.setTabChangesFocus(True)
+        self.txt_result.setTabChangesFocus(True)
+        self.txt_tester.setTabChangesFocus(True)
+
 
     #popup
     def ventana_emergente(self, mensaje):

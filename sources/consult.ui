@@ -38,6 +38,17 @@
         <height>160</height>
        </size>
       </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    background-color: #D52424;
+    color: white;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #B71C1C;
+}</string>
+      </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -118,7 +129,7 @@
          <height>25</height>
         </rect>
        </property>
-       <property name="placeholderText">
+       <property name="placeholderText" stdset="0">
         <string/>
        </property>
       </widget>
@@ -230,6 +241,17 @@
            <width>250</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+    background-color: #D52424;
+    color: white;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #B71C1C;
+}</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
