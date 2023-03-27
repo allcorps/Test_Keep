@@ -1,7 +1,7 @@
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtCore import QByteArray, QIODevice, QBuffer, Qt
 from PyQt5.QtWidgets import QMessageBox, QApplication
-from PyQt5.QtGui import QPixmap, QScreen
+from PyQt5.QtGui import QPixmap, QScreen, QIcon
 import main
 import consult
 import sqlite3
@@ -16,6 +16,7 @@ class Testing(QtWidgets.QMainWindow):
 
         # establecer tamaño fijo de la ventana
         self.setFixedSize(self.size())
+        self.setWindowIcon(QIcon("sources/tk_log.png"))
 
         self.conexion = sqlite3.connect('sources/database.bd', timeout=10)
 

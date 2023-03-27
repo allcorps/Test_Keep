@@ -32,6 +32,17 @@
     </property>
     <item>
      <widget class="QFrame" name="frame">
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    background-color: #D52424;
+    color: white;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #B71C1C;
+}</string>
+      </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -41,11 +52,23 @@
       <layout class="QGridLayout" name="gridLayout">
        <item row="1" column="0" colspan="3">
         <widget class="QLabel" name="lbl_instructions">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
          <property name="text">
-          <string>aqui van instrucciones</string>
+          <string>Actualmente estas en una ejecucion de pruebas, para poder tomar captura de la pantalla presiona F1, si deseas concluir la ejecucion selecciona el boton &quot;Guardar&quot;</string>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
